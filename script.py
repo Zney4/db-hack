@@ -37,8 +37,19 @@ def remove_chastisements(name):
 
 remove_chastisements(name="Голубев Феофан Владленович")
 
+compliment_list = [
+    "Молодец!",
+    "Отлично!",
+    "Прекрасно!",
+    "Ты сегодня прыгнул выше головы!",
+    "Я вижу, как ты стараешься!",
+    "Мы с тобой не зря поработали!",
+    "Именно этого я давно ждал от тебя!",
+    "Ты меня очень обрадовал!",
+]
 
-def create_commendation(name):
+
+def create_commendation(compliment_list, name):
     schoolkid = Schoolkid.objects.filter(full_name__contains=name).get()
     print(schoolkid)
     subjects = Subject.objects.filter(year_of_study=6, title="Музыка")
@@ -47,16 +58,7 @@ def create_commendation(name):
     ).order_by("date")
     teachers = Teacher.objects.filter(full_name__contains="Селезнева Майя Макаровна")
     dates = lessons[0].date
-    compliment_list = [
-        "Молодец!",
-        "Отлично!",
-        "Прекрасно!",
-        "Ты сегодня прыгнул выше головы!",
-        "Я вижу, как ты стараешься!",
-        "Мы с тобой не зря поработали!",
-        "Именно этого я давно ждал от тебя!",
-        "Ты меня очень обрадовал!",
-    ]
+
     compliment = Commendation.objects.create(
         subject=subjects[0],
         schoolkid=schoolkid,
@@ -66,4 +68,4 @@ def create_commendation(name):
     )
 
 
-create_commendation(name="Фролов Иван Григорьевич")
+create_commendation(compliment_list, name="Баранова Евфросиния Эльдаровна")
