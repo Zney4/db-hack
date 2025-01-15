@@ -37,6 +37,7 @@ def remove_chastisements(name):
 
 remove_chastisements(name="Голубев Феофан Владленович")
 
+
 compliment_list = [
     "Молодец!",
     "Отлично!",
