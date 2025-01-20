@@ -13,13 +13,30 @@ from datacenter.models import (
 )
 import random
 
+COMPLIMENT_LIST = [
+    "Молодец!",
+    "Отлично!",
+    "Прекрасно!",
+    "Ты сегодня прыгнул выше головы!",
+    "Я вижу, как ты стараешься!",
+    "Мы с тобой не зря поработали!",
+    "Именно этого я давно ждал от тебя!",
+    "Ты меня очень обрадовал!",
+]
 
-def fix_marks(name):
+
+def name_schoolkid(name):
+    schoolkid = Schoolkid.objects.filter(full_name__contains=name).get()
+    return schoolkid
+
+
+def fix_marks(schoolkid):
     try:
-        schoolkid = Schoolkid.objects.filter(full_name__contains=name).get()
-        point = Mark.objects.filter(schoolkid=schoolkid, points__lte=3).update(points=5)
+        point = Mark.objects.filter(schoolkid=name_schoolkid, points__lte=3).update(
+            points=5
+        )
         print(point)
-        point = Mark.objects.filter(schoolkid=schoolkid, points__lte=3)
+        point = Mark.objects.filter(schoolkid=name_schoolkid, points__lte=3)
         print(point.count())
     except NameError as e:
         print("Error", e)
@@ -31,12 +48,8 @@ def fix_marks(name):
         print("Error", e)
 
 
-fix_marks(name="Фролов Иван Григорьевич")
-
-
-def remove_chastisements(name):
+def remove_chastisements(schoolkid):
     try:
-        schoolkid = Schoolkid.objects.filter(full_name__contains=name).get()
         comments = Chastisement.objects.filter(schoolkid=schoolkid)
         comments.delete()
         print(comments)
@@ -49,12 +62,9 @@ def remove_chastisements(name):
     except MultipleObjectsReturned as e:
         print("Error", e)
 
-remove_chastisements(name="Голубев Феофан Владленович")
 
-
-def change_rating(name):
+def change_rating(schoolkid):
     try:
-        schoolkid = Schoolkid.objects.filter(full_name__contains=name).get()
         point = Mark.objects.filter(schoolkid=schoolkid, points__lte=3).update(points=5)
         print(point)
         point = Mark.objects.filter(schoolkid=schoolkid, points__lte=3)
@@ -68,25 +78,9 @@ def change_rating(name):
     except MultipleObjectsReturned as e:
         print("Error", e)
 
-change_rating(name="Голубев Феофан Владленович")
 
-
-compliment_list = [
-    "Молодец!",
-    "Отлично!",
-    "Прекрасно!",
-    "Ты сегодня прыгнул выше головы!",
-    "Я вижу, как ты стараешься!",
-    "Мы с тобой не зря поработали!",
-    "Именно этого я давно ждал от тебя!",
-    "Ты меня очень обрадовал!",
-]
-
-
-def create_commendation(compliment_list, name):
+def create_commendation(schoolkid):
     try:
-        schoolkid = Schoolkid.objects.filter(full_name__contains=name).get()
-        print(schoolkid)
         subjects = Subject.objects.filter(year_of_study=6, title="Музыка")
         lessons = Lesson.objects.filter(
             year_of_study=6, group_letter="А", subject=subjects[0]
@@ -101,7 +95,7 @@ def create_commendation(compliment_list, name):
             schoolkid=schoolkid,
             teacher=teachers[0],
             created=dates,
-            text=random.choice(compliment_list),
+            text=random.choice(COMPLIMENT_LIST),
         )
     except NameError as e:
         print("Error", e)
@@ -112,4 +106,10 @@ def create_commendation(compliment_list, name):
     except MultipleObjectsReturned as e:
         print("Error", e)
 
-create_commendation(compliment_list, name="Голубев Феофан Владленович")
+
+if __name__ == "__main__":
+    schoolkid = name_schoolkid(name="Голубев Феофан Владленович")
+    fix_marks(schoolkid)
+    remove_chastisements(schoolkid)
+    change_rating(schoolkid)
+    create_commendation(schoolkid)
