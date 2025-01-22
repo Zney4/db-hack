@@ -26,24 +26,25 @@ COMPLIMENT_LIST = [
 
 
 def name_schoolkid(name):
-    schoolkid = Schoolkid.objects.filter(full_name__contains=name).get()
-    return schoolkid
+    try:
+        schoolkid = Schoolkid.objects.filter(full_name__contains=name).get()
+        return schoolkid
+    except ObjectDoesNotExist as e:
+        print("Error", e)
+    except MultipleObjectsReturned as e:
+        print("Error", e)
 
 
 def fix_marks(schoolkid):
     try:
-        point = Mark.objects.filter(schoolkid=name_schoolkid, points__lte=3).update(
+        point = Mark.objects.filter(schoolkid=schoolkid, points__lte=3).update(
             points=5
         )
         print(point)
-        point = Mark.objects.filter(schoolkid=name_schoolkid, points__lte=3)
+        point = Mark.objects.filter(schoolkid=schoolkid, points__lte=3)
         print(point.count())
-    except NameError as e:
-        print("Error", e)
-
     except ObjectDoesNotExist as e:
         print("Error", e)
-
     except MultipleObjectsReturned as e:
         print("Error", e)
 
@@ -53,12 +54,8 @@ def remove_chastisements(schoolkid):
         comments = Chastisement.objects.filter(schoolkid=schoolkid)
         comments.delete()
         print(comments)
-    except NameError as e:
-        print("Error", e)
-
     except ObjectDoesNotExist as e:
         print("Error", e)
-
     except MultipleObjectsReturned as e:
         print("Error", e)
 
@@ -69,12 +66,8 @@ def change_rating(schoolkid):
         print(point)
         point = Mark.objects.filter(schoolkid=schoolkid, points__lte=3)
         print(point.count())
-    except NameError as e:
-        print("Error", e)
-
     except ObjectDoesNotExist as e:
         print("Error", e)
-
     except MultipleObjectsReturned as e:
         print("Error", e)
 
@@ -97,12 +90,8 @@ def create_commendation(schoolkid):
             created=dates,
             text=random.choice(COMPLIMENT_LIST),
         )
-    except NameError as e:
-        print("Error", e)
-
     except ObjectDoesNotExist as e:
         print("Error", e)
-
     except MultipleObjectsReturned as e:
         print("Error", e)
 
