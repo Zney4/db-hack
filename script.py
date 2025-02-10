@@ -12,6 +12,7 @@ from datacenter.models import (
     Subject,
 )
 import random
+from django.shortcuts import get_object_or_404
 
 COMPLIMENT_LIST = [
     "Молодец!",
@@ -79,23 +80,15 @@ result = handler.handle(remove_chastisements, schoolkid=schoolkid)
 print(result)
 
 
-def change_rating(schoolkid):
-    point = Mark.objects.filter(schoolkid=schoolkid, points__lte=3).update(points=5)
-    print(point)
-    point = Mark.objects.filter(schoolkid=schoolkid, points__lte=3)
-    print(point.count())
-
-
-result = handler.handle(change_rating, schoolkid=schoolkid)
-print(result)
-
-
 def create_commendation(schoolkid):
-    subjects = Subject.objects.filter(year_of_study=6, title="Музыка")
-    lessons = Lesson.objects.filter(
-        year_of_study=6, group_letter="А", subject=subjects[0]
+    subjects = get_object_or_404(Subject, year_of_study=6, title="Музыка")
+    lessons = get_object_or_404(
+        Lesson, year_of_study=6, group_letter="А", subject=subjects[0]
     ).order_by("date")
-    teachers = Teacher.objects.filter(full_name__contains="Селезнева Майя Макаровна")
+    teachers = get_object_or_404(
+        Teacher, full_name__contains="Селезнева Майя Макаровна"
+    )
+
     dates = lessons[0].date
     compliment = Commendation.objects.create(
         subject=subjects[0],
