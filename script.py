@@ -82,20 +82,21 @@ print(result)
 
 def create_commendation(schoolkid):
     subjects = get_object_or_404(Subject, year_of_study=6, title="Музыка")
-    lessons = Lesson.objects.filter(
-        year_of_study=6, group_letter="А", subject=subjects
-    ).order_by("date")
-    teachers = get_object_or_404(
-        Teacher, full_name__contains="Селезнева Майя Макаровна"
-    )
-    dates = lessons[0].date
-    compliment = Commendation.objects.create(
-        subject=subjects,
-        schoolkid=schoolkid,
-        teacher=teachers,
-        created=dates,
-        text=random.choice(COMPLIMENT_LIST),
-    )
+    if Lesson:
+        lessons = Lesson.objects.filter(
+            year_of_study=6, group_letter="А", subject=subjects
+        ).order_by("date")
+        teachers = get_object_or_404(
+            Teacher, full_name__contains="Селезнева Майя Макаровна"
+        )
+        dates = lessons[0].date
+        compliment = Commendation.objects.create(
+            subject=subjects,
+            schoolkid=schoolkid,
+            teacher=teachers,
+            created=dates,
+            text=random.choice(COMPLIMENT_LIST),
+        )
 
 
 result = handler.handle(create_commendation, schoolkid=schoolkid)
